@@ -1,0 +1,46 @@
+﻿Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 3.9s
+  Running TypeScript ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/17) ...
+  Generating static pages using 11 workers (4/17) 
+  Generating static pages using 11 workers (8/17) 
+Error: Dynamic server usage: Route / couldn't be rendered statically because it used revalidate: 0 fetch http://localhost:3000/api/plants /. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at w (D:\7th Semester\Adv Web\Semester Proj\plant-shop\.next\server\chunks\ssr\[root-of-the-server]__ad183419._.js:1:88460)
+    at <unknown> (D:\7th Semester\Adv Web\Semester Proj\plant-shop\.next\server\chunks\ssr\[root-of-the-server]__ad183419._.js:8:10520) {
+  description: "Route / couldn't be rendered statically because it used revalidate: 0 fetch http://localhost:3000/api/plants /. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+node.exe : Error occurred 
+prerendering page "/". Read 
+more: https://nextjs.org/docs/me
+ssages/prerender-error
+At C:\Program 
+Files\nodejs\npx.ps1:29 char:3
++   & $NODE_EXE $NPX_CLI_JS 
+$args
++   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : N 
+   otSpecified: (Error occurre  
+  d ...prerender-error:String   
+ ) [], RemoteException
+    + FullyQualifiedErrorId : N 
+   ativeCommandError
+ 
+ReferenceError: Link is not 
+defined
+    at c (D:\7th Semester\Adv 
+Web\Semester Proj\plant-shop\.ne
+xt\server\chunks\ssr\[root-of-th
+e-server]__5f303370._.js:1:2278)
+ {
+  digest: '2531506931'
+}
+Export encountered an error on 
+/page: /, exiting the build.
+Γ¿» Next.js build worker exited 
+with code: 1 and signal: null
