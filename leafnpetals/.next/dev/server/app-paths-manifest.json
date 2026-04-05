@@ -1,0 +1,12 @@
+{
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/(auth)/register/page": "app/(auth)/register/page.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/plants/[id]/route": "app/api/plants/[id]/route.js",
+  "/api/plants/route": "app/api/plants/route.js",
+  "/api/seed/route": "app/api/seed/route.js",
+  "/cart/page": "app/cart/page.js",
+  "/category/[slug]/page": "app/category/[slug]/page.js",
+  "/page": "app/page.js",
+  "/plant/[id]/page": "app/plant/[id]/page.js"
+}

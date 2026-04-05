@@ -1,0 +1,23 @@
+{
+  "/(admin)/dashboard/page": "/dashboard",
+  "/(auth)/login/page": "/login",
+  "/(auth)/register/page": "/register",
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/about/page": "/about",
+  "/api/auth/[...nextauth]/route": "/api/auth/[...nextauth]",
+  "/api/auth/register/route": "/api/auth/register",
+  "/api/orders/route": "/api/orders",
+  "/api/orders/user/route": "/api/orders/user",
+  "/api/plants/[id]/route": "/api/plants/[id]",
+  "/api/plants/route": "/api/plants",
+  "/cart/page": "/cart",
+  "/category/[slug]/page": "/category/[slug]",
+  "/checkout/page": "/checkout",
+  "/contact/page": "/contact",
+  "/faq/page": "/faq",
+  "/favicon.ico/route": "/favicon.ico",
+  "/page": "/",
+  "/plant/[id]/page": "/plant/[id]",
+  "/profile/page": "/profile"
+}

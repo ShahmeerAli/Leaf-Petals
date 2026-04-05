@@ -1,0 +1,23 @@
+{
+  "/(admin)/dashboard/page": "app/(admin)/dashboard/page.js",
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/(auth)/register/page": "app/(auth)/register/page.js",
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/about/page": "app/about/page.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/auth/register/route": "app/api/auth/register/route.js",
+  "/api/orders/route": "app/api/orders/route.js",
+  "/api/orders/user/route": "app/api/orders/user/route.js",
+  "/api/plants/[id]/route": "app/api/plants/[id]/route.js",
+  "/api/plants/route": "app/api/plants/route.js",
+  "/cart/page": "app/cart/page.js",
+  "/category/[slug]/page": "app/category/[slug]/page.js",
+  "/checkout/page": "app/checkout/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/faq/page": "app/faq/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js",
+  "/plant/[id]/page": "app/plant/[id]/page.js",
+  "/profile/page": "app/profile/page.js"
+}

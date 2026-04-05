@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///D:/7th%20Semester/Adv%20Web/Semester%20Proj/plant-shop/src/components/AuthProvider.js"],"sourcesContent":["\"use client\";\r\n\r\nimport { SessionProvider } from \"next-auth/react\";\r\n\r\nexport const AuthProvider = ({ children }) => {\r\n    return <SessionProvider>{children}</SessionProvider>;\r\n};\r\n"],"names":[],"mappings":";;;;;AAEA;AAFA;;;AAIO,MAAM,eAAe,CAAC,EAAE,QAAQ,EAAE;IACrC,qBAAO,8OAAC,iKAAe;kBAAE;;;;;;AAC7B"}}]
+}
