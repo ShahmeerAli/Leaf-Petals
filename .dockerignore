@@ -1,0 +1,7 @@
+node_modules
+npm-debug.log
+.next
+.git
+README.md
+build-log.txt
+build-log-utf8.txt

@@ -12,7 +12,7 @@ services:
     environment:
       - MONGODB_URI=mongodb+srv://alishahmeer998_db_user:4WCiPwPANvllS1Bq@web.cbt2vlw.mongodb.net/plantshop?retryWrites=true&w=majority&appName=web
       - NEXTAUTH_SECRET=my_super_secret_plant_shop_key_2026
-      - NEXTAUTH_URL=16.176.177.87:8081
+      - NEXTAUTH_URL=http://16.176.177.87:8081/
     volumes:
       - ./:/usr/src/app
     networks:
