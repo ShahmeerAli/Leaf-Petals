@@ -15,7 +15,7 @@ pipeline {
             steps {
                 echo 'Starting build containers...'
                 sh 'docker compose -f docker-compose.jenkins.yml down --remove-orphans || true'
-                sh 'docker compose -f docker-compose.jenkins.yml up -d'
+                sh 'docker-compose -f docker-compose.jenkins.yml up -d'
                 echo 'Build complete. App running on port 9090.'
             }
         }
