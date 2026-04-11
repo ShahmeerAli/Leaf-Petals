@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   web_ci:
-    image: shahmeerali01/leafandpetals:latest
+    image:  shahmeerali01/leafpetals-i1:latest
     container_name: leafandpetals_web_ci
     restart: unless-stopped
     ports:
