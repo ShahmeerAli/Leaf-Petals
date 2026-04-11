@@ -1,18 +1,17 @@
 version: "3.9"
 
 services:
-
   web_build:
     image: node:22-alpine
     container_name: leafandpetals_web_build
     working_dir: /usr/src/app
     command: sh -c "npm install && npm run build && npm start"
     ports:
-      - "8082:8080"
+      - "9090:8080"
     environment:
       - MONGODB_URI=mongodb+srv://alishahmeer998_db_user:4WCiPwPANvllS1Bq@web.cbt2vlw.mongodb.net/plantshop?retryWrites=true&w=majority&appName=web
       - NEXTAUTH_SECRET=my_super_secret_plant_shop_key_2026
-      - NEXTAUTH_URL=http://16.176.177.87:8081/
+      - NEXTAUTH_URL=http://16.176.177.87:9090
     volumes:
       - ./:/usr/src/app
     networks:
