@@ -1,35 +1,72 @@
+# version: "3.9"
+
+# services:
+#   web:
+#     image: shahmeerali01/leafandpetals:latest
+#     container_name: leafandpetals_web
+#     restart: unless-stopped
+#     ports:
+#       - "8081:8080"
+#     environment:
+#       - MONGODB_URI=mongodb://db:27017/plantshop
+#       - NEXTAUTH_SECRET=my_super_secret_plant_shop_key_2026
+#       - NEXTAUTH_URL=http://52.63.249.228:8081
+#     depends_on:
+#       - db
+#     networks:
+#       - app-network
+
+#   db:
+#     image: mongo:latest
+#     container_name: leafandpetals_db
+#     restart: unless-stopped
+   
+#     ports:
+#       - "27017:27017"
+#     volumes:
+#       - mongo_data:/data/db 
+#     networks:
+#       - app-network
+
+# networks:
+#   app-network:
+
+# volumes:
+#   mongo_data:
+
 version: "3.9"
 
 services:
-  web:
+  web_ci:
     image: shahmeerali01/leafandpetals:latest
-    container_name: leafandpetals_web
+    container_name: leafandpetals_web_ci
     restart: unless-stopped
     ports:
-      - "8081:8080"
+      - "4000:8080"
     environment:
-      - MONGODB_URI=mongodb://db:27017/plantshop
+      - MONGODB_URI=mongodb://db_ci:27017/plantshop
       - NEXTAUTH_SECRET=my_super_secret_plant_shop_key_2026
-      - NEXTAUTH_URL=http://16.176.177.87:8081
+      - NEXTAUTH_URL=http://16.176.177.87:4000
     depends_on:
-      - db
-    networks:
-      - app-network
-
-  db:
-    image: mongo:latest
-    container_name: leafandpetals_db
-    restart: unless-stopped
-   
-    ports:
-      - "27017:27017"
+      - db_ci
     volumes:
-      - mongo_data:/data/db 
+      - .:/app
     networks:
-      - app-network
+      - app-network-ci
+
+  db_ci:
+    image: mongo:latest
+    container_name: leafandpetals_db_ci
+    restart: unless-stopped
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data_ci:/data/db
+    networks:
+      - app-network-ci
 
 networks:
-  app-network:
+  app-network-ci:
 
 volumes:
-  mongo_data:
+  mongo_data_ci:
