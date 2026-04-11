@@ -7,9 +7,11 @@ services:
     container_name: leafandpetals_web
     restart: unless-stopped
     ports:
-      - "80:3000"
+      - "80:8080"
     environment:
       - MONGODB_URI=mongodb+srv://alishahmeer998_db_user:4WCiPwPANvllS1Bq@web.cbt2vlw.mongodb.net/plantshop?retryWrites=true&w=majority&appName=web
+      - NEXTAUTH_SECRET=my_super_secret_plant_shop_key_2026
+      - NEXTAUTH_URL=http://3.27.200.70
     networks:
       - app-network
 
