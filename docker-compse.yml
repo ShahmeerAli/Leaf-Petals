@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+
+  web:
+    image: shahmeerali01/leafandpetals:latest
+    container_name: leafandpetals_web
+    restart: unless-stopped
+    ports:
+      - "80:3000"
+    environment:
+      - MONGODB_URI=mongodb+srv://alishahmeer998_db_user:4WCiPwPANvllS1Bq@web.cbt2vlw.mongodb.net/plantshop?retryWrites=true&w=majority&appName=web
+    networks:
+      - app-network
+
+networks:
+  app-network:

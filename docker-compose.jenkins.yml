@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+
+  web_build:
+    image: node:18-alpine
+    container_name: leafandpetals_web_build
+    working_dir: /usr/src/app
+    command: sh -c "npm install && npm run build && npm start"
+    ports:
+      - "8081:3000"
+    environment:
+      - MONGODB_URI=mongodb+srv://alishahmeer998_db_user:4WCiPwPANvllS1Bq@web.cbt2vlw.mongodb.net/plantshop?retryWrites=true&w=majority&appName=web
+    volumes:
+      - ./:/usr/src/app
+    networks:
+      - build-network
+
+networks:
+  build-network:
