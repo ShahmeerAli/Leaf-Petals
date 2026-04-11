@@ -1,21 +1,36 @@
 version: "3.9"
 
 services:
-  web_build:
-    image: node:22-alpine
-    container_name: leafandpetals_web_build
-    working_dir: /usr/src/app
-    command: sh -c "npm install && npm run build && npm start"
+  web_ci:
+    image: shahmeerali01/leafandpetals:latest
+    container_name: leafandpetals_web_ci
+    restart: unless-stopped
     ports:
-      - "9090:8080"
+      - "4000:8080"
     environment:
-      - MONGODB_URI=mongodb+srv://alishahmeer998_db_user:4WCiPwPANvllS1Bq@web.cbt2vlw.mongodb.net/plantshop?retryWrites=true&w=majority&appName=web
+      - MONGODB_URI=mongodb://db_ci:27017/plantshop
       - NEXTAUTH_SECRET=my_super_secret_plant_shop_key_2026
-      - NEXTAUTH_URL=http://16.176.177.87:9090
+      - NEXTAUTH_URL=http://16.176.177.87:4000
+    depends_on:
+      - db_ci
     volumes:
-      - ./:/usr/src/app
+      - .:/app
     networks:
-      - build-network
+      - app-network-ci
+
+  db_ci:
+    image: mongo:latest
+    container_name: leafandpetals_db_ci
+    restart: unless-stopped
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data_ci:/data/db
+    networks:
+      - app-network-ci
 
 networks:
-  build-network:
+  app-network-ci:
+
+volumes:
+  mongo_data_ci:
