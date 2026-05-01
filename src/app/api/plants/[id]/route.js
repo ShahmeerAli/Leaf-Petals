@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/db/mongodb";
 import Plant from "@/models/Plant";
 import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function PUT(req, { params }) {
     try {
-        const session = await getServerSession();
+        const session = await getServerSession(authOptions);
         // Admin check logic
         /*
         if (!session || session.user.role !== "admin") {
@@ -34,7 +35,7 @@ export async function PUT(req, { params }) {
 
 export async function DELETE(req, { params }) {
     try {
-        const session = await getServerSession();
+        const session = await getServerSession(authOptions);
         // Admin check logic
         /*
         if (!session || session.user.role !== "admin") {

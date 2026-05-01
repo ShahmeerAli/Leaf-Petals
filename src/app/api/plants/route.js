@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/db/mongodb";
 import Plant from "@/models/Plant";
 import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET() {
     try {
@@ -15,7 +16,7 @@ export async function GET() {
 
 export async function POST(req) {
     try {
-        const session = await getServerSession();
+        const session = await getServerSession(authOptions);
         // Assuming you have an admin role check
         /*
         if (!session || session.user.role !== "admin") {
