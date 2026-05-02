@@ -8,12 +8,12 @@ services:
     ports:
       - "8081:8080"
     environment:
-      # We changed localhost to the name of the DB service below
       - MONGODB_URI=mongodb://leaf-petals-db:27017/LeafPetals
       - NEXTAUTH_SECRET=my_super_secret_plant_shop_key_2026
-      # Note: We keep this as localhost:3000 because this is how users/tests access the app from the outside
-      - NEXTAUTH_URL=http://localhost:8081
+      # Use IPv4 explicitly to avoid Node.js resolving issues
+      - NEXTAUTH_URL=http://127.0.0.1:8081
       - NEXTAUTH_URL_INTERNAL=http://127.0.0.1:8080
+      - NEXT_PUBLIC_API_URL=http://127.0.0.1:8080
       - NODE_ENV=production
       
     depends_on:
