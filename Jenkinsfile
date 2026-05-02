@@ -20,7 +20,7 @@ pipeline {
                 sh 'docker-compose up -d'
                 
                 // Allow 15 seconds for MongoDB to initialize and Next.js to start
-                sleep time: 15, unit: 'SECONDS'
+                sleep time: 45, unit: 'SECONDS'
             }
         }
         
