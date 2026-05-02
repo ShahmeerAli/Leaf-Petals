@@ -11,7 +11,7 @@ RUN npm install
 
 # Copy the rest of your application code
 COPY . .
-
+ENV MONGODB_URI="mongodb://dummy-string-to-pass-build-check"
 # Build the Next.js application for production
 RUN npm run build
 
