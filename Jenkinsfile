@@ -92,6 +92,25 @@
 //   3. --network host so the container reaches localhost:8081 directly
 // ─────────────────────────────────────────────────────────────────────────────
 
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Jenkinsfile — LeafPetals  |  Fixed version
+//
+// ROOT CAUSE OF PREVIOUS ERROR:
+//   "session not created from chrome not reachable"
+//   ↳ markhobson/maven-chrome has Java 11 but tests compiled to Java 17/25
+//   ↳ withDockerContainer + git step causes Maven to run on the HOST, not
+//     inside the container where Chrome lives ("special launcher ignored")
+//
+// THE FIX:
+//   1. Use a custom Dockerfile.test (ubuntu:22.04 + Java 17 + Chrome stable)
+//      stored in the LeafPetalsTestCases repo
+//   2. Use `docker run` (not withDockerContainer) so Maven truly runs inside
+//      the container alongside Chrome
+//   3. --network host so the container reaches localhost:8081 directly
+// ─────────────────────────────────────────────────────────────────────────────
+
 pipeline {
     agent any
 
@@ -156,6 +175,7 @@ pipeline {
                 echo "Running Selenium tests against ${APP_URL}..."
                 sh """
                     mkdir -p test-results
+                    chmod 777 test-results
                     docker run --rm \
                         --network host \
                         --shm-size=2g \
