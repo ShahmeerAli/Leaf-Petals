@@ -33,21 +33,23 @@ pipeline {
             }
         }
         
-      stage('Execute Containerized Tests') {
+        stage('Execute Containerized Tests') {
             agent {
                 docker {
                     image 'markhobson/maven-chrome'
-                    // REMOVED the -v $HOME/.m2 volume mapping to fix the permission error
-                    args '--network host' 
+                    // FIX 1: Added --entrypoint="" to prevent the container from crashing on startup
+                    // --network host allows the container to reach the app on port 8081[cite: 1]
+                    args '--entrypoint="" --network host' 
                 }
             }
             steps {
-                // IMPORTANT: We need to pull the test code AGAIN inside this specific agent 
-                // because Jenkins uses a fresh workspace (@2) for the Docker agent.
                 dir('LeafPetalsTestCases') {
+                    // Re-checkout inside this agent because Docker uses a separate workspace[cite: 1]
                     git branch: 'main', url: 'https://github.com/ShahmeerAli/LeafPetalsTestCases.git'
-                    echo 'Compiling and running Selenium test cases...'
-                    sh 'mvn clean test' 
+                    
+                    echo 'Compiling and running 15 Selenium test cases...'
+                    // FIX 2: Added -Dmaven.repo.local to force Maven to use a writable folder in the workspace[cite: 1]
+                    sh 'mvn clean test -Dmaven.repo.local=.m2/repository' 
                 }
             }
         }
@@ -55,11 +57,11 @@ pipeline {
     
     post {
         always {
-            // 1. TEAR DOWN: Shuts down the deployment to ensure it is "down initially" for the next run
+            // TEAR DOWN: Shuts down deployment so it is "down initially" for the next run[cite: 1]
             echo 'Shutting down the application environment...'
             sh 'docker-compose down'
 
-            // 2. EMAIL: Sends the email strictly to the person who pushed the code
+            // EMAIL: Sends results to the committer captured in the environment block[cite: 1]
             emailext (
                 subject: "Test Results & Build Status: Job ${env.JOB_NAME}",
                 body: """
