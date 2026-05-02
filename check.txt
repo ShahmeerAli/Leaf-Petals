@@ -1,1 +1,2 @@
-checking the jenkins file. test 1
+checking the jenkins file. test 1 failed
+test 2 running
