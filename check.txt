@@ -1,2 +1,3 @@
 checking the jenkins file. test 1 failed
 test 2 running
+test 3 running test 2 failed
