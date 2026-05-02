@@ -19,4 +19,5 @@ RUN npm run build
 EXPOSE 8081
 
 # Define the command to run your app
-CMD ["npm", "start"]
+# Start the app and bind it to 0.0.0.0 to accept external connections
+CMD ["npm", "start", "--", "-H", "0.0.0.0"]
