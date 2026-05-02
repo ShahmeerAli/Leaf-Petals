@@ -18,7 +18,7 @@ ENV NEXT_PUBLIC_API_URL="http://127.0.0.1:8080"
 RUN npm run build
 
 # Expose the port the app runs on
-EXPOSE 3000
+EXPOSE 8081
 
 # Define the command to run your app
 # Start the app and bind it to 0.0.0.0 to accept external connections
