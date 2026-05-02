@@ -2,15 +2,12 @@ pipeline {
     agent any
 
     environment {
-        // This will now successfully extract shahmeer.devel@gmail.com!
         PUSHER_EMAIL = sh(script: "git log -1 --pretty=format:'%ae'", returnStdout: true).trim()
     }
 
     stages {
         stage('Checkout Application Code') {
-            steps {
-                checkout scm
-            }
+            steps { checkout scm }
         }
 
         stage('Deploy Leaf & Petals App') {
@@ -26,8 +23,15 @@ pipeline {
         stage('Health Check') {
             steps {
                 echo 'Verifying the app is actually alive on port 8081...'
-                // Pings the app. If it drops the connection, the build stops here.
-                sh 'curl -f http://localhost:8081 || exit 1'
+                sh '''
+                curl -f http://localhost:8081 || {
+                    echo "================================================="
+                    echo "CRITICAL FAILURE: NEXT.JS CRASHED. PRINTING LOGS:"
+                    echo "================================================="
+                    docker logs leaf_petals_app
+                    exit 1
+                }
+                '''
             }
         }
 
@@ -54,7 +58,6 @@ pipeline {
             echo 'Shutting down the application environment...'
             sh 'docker-compose down'
 
-            // Fully dynamic! Uses the variable we extracted at the top.
             emailext (
                 subject: "Assignment 3: ${currentBuild.currentResult} - ${env.JOB_NAME}",
                 body: "View the test results here: ${env.BUILD_URL}",

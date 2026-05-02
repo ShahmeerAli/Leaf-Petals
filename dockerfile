@@ -16,7 +16,7 @@ ENV MONGODB_URI="mongodb://dummy-string-to-pass-build-check"
 RUN npm run build
 
 # Expose the port the app runs on
-EXPOSE 8081
+EXPOSE 3000
 
 # Define the command to run your app
 # Start the app and bind it to 0.0.0.0 to accept external connections

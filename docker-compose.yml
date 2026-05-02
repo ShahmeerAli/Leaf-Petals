@@ -14,6 +14,8 @@ services:
       # Note: We keep this as localhost:3000 because this is how users/tests access the app from the outside
       - NEXTAUTH_URL=http://localhost:8081
       - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
     depends_on:
       - leaf-petals-db
     networks:
