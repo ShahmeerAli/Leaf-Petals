@@ -33,16 +33,19 @@ pipeline {
             }
         }
         
-        stage('Execute Containerized Tests') {
+      stage('Execute Containerized Tests') {
             agent {
                 docker {
                     image 'markhobson/maven-chrome'
-                    // --network host allows the test container to reach your app running on the EC2 host
-                    args '--network host -v $HOME/.m2:/root/.m2'
+                    // REMOVED the -v $HOME/.m2 volume mapping to fix the permission error
+                    args '--network host' 
                 }
             }
             steps {
+                // IMPORTANT: We need to pull the test code AGAIN inside this specific agent 
+                // because Jenkins uses a fresh workspace (@2) for the Docker agent.
                 dir('LeafPetalsTestCases') {
+                    git branch: 'main', url: 'https://github.com/ShahmeerAli/LeafPetalsTestCases.git'
                     echo 'Compiling and running Selenium test cases...'
                     sh 'mvn clean test' 
                 }
