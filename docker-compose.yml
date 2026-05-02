@@ -1,38 +1,31 @@
 version: '3.8'
 
 services:
-  # Your Next.js Application
   leaf-petals-web:
     build: .
     container_name: leaf_petals_app
+    # External traffic hits 8081, internal container listens on native 3000
     ports:
-      - "8081:8081"
+      - "8081:3000"
     environment:
       - MONGODB_URI=mongodb://leaf-petals-db:27017/LeafPetals
       - NEXTAUTH_SECRET=my_super_secret_plant_shop_key_2026
-      # Use IPv4 explicitly to avoid Node.js resolving issues
+      # Explicit IPv4 addresses to prevent connection refused errors
       - NEXTAUTH_URL=http://127.0.0.1:8081
-      - NEXT_PUBLIC_API_URL=http://localhost:8081
+      - NEXT_PUBLIC_API_URL=http://127.0.0.1:8081
       - NODE_ENV=production
-      
     depends_on:
       - leaf-petals-db
     networks:
       - leaf_petals_network
 
-  # Your MongoDB Database Server
   leaf-petals-db:
     image: mongo:latest
     container_name: leaf_petals_db
     ports:
       - "27017:27017"
-    volumes:
-      - mongo_data:/data/db 
     networks:
       - leaf_petals_network
-
-volumes:
-  mongo_data:
 
 networks:
   leaf_petals_network:
