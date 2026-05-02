@@ -1,37 +1,38 @@
-version: "3.9"
+version: '3.8'
 
 services:
-  web:
-    image: shahmeerali01/leafandpetals:latest
-    container_name: leafandpetals_web
-    restart: unless-stopped
+  # Your Next.js Application
+  leaf-petals-web:
+    build: .
+    container_name: leaf_petals_app
     ports:
-      - "8081:8080"
+      - "3000:3000"
     environment:
-      - MONGODB_URI=mongodb://db:27017/plantshop
+      # We changed localhost to the name of the DB service below
+      - MONGODB_URI=mongodb://leaf-petals-db:27017/LeafPetals
       - NEXTAUTH_SECRET=my_super_secret_plant_shop_key_2026
-      - NEXTAUTH_URL=http://52.63.249.228:8081
+      # Note: We keep this as localhost:3000 because this is how users/tests access the app from the outside
+      - NEXTAUTH_URL=http://localhost:3000
+      - NODE_ENV=production
     depends_on:
-      - db
+      - leaf-petals-db
     networks:
-      - app-network
+      - leaf_petals_network
 
-  db:
+  # Your MongoDB Database Server
+  leaf-petals-db:
     image: mongo:latest
-    container_name: leafandpetals_db
-    restart: unless-stopped
-   
+    container_name: leaf_petals_db
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db 
     networks:
-      - app-network
-
-networks:
-  app-network:
+      - leaf_petals_network
 
 volumes:
   mongo_data:
 
-
+networks:
+  leaf_petals_network:
+    driver: bridge
