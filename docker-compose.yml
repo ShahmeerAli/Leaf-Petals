@@ -12,8 +12,7 @@ services:
       - NEXTAUTH_SECRET=my_super_secret_plant_shop_key_2026
       # Use IPv4 explicitly to avoid Node.js resolving issues
       - NEXTAUTH_URL=http://127.0.0.1:8081
-      - NEXTAUTH_URL_INTERNAL=http://127.0.0.1:8080
-      - NEXT_PUBLIC_API_URL=http://127.0.0.1:8080
+      - NEXT_PUBLIC_API_URL=http://localhost:8081
       - NODE_ENV=production
       
     depends_on:
