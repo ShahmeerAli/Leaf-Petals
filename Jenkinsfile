@@ -2,24 +2,29 @@ pipeline {
     agent any
 
     environment {
-        // Dynamically extracts the email from the actual commit metadata
-        PUSHER_EMAIL = sh(script: "git log -1 --pretty=format:'%ae'", returnStdout: true).trim()
+        // Dynamically get the email
+        RAW_EMAIL = sh(script: "git log -1 --pretty=format:'%ae'", returnStdout: true).trim()
     }
 
     stages {
-        stage('Checkout Application Code') {
+        stage('Checkout Code') {
+            steps { checkout scm }
+        }
+
+        stage('Deploy & Wait') {
             steps {
-                checkout scm
+                echo 'Starting Leaf & Petals environment...'
+                sh 'docker-compose down && docker-compose up -d'
+                echo 'Waiting 90 seconds for Next.js and MongoDB to sync...'
+                sleep time: 90, unit: 'SECONDS'
             }
         }
 
-        stage('Deploy Leaf & Petals App') {
+        stage('Sanity Check') {
             steps {
-                echo 'Starting the application environment...'
-                sh 'docker-compose up -d'
-                
-                // Increased to 90s because Build #10 showed connection resets
-                sleep time: 90, unit: 'SECONDS'
+                echo 'Checking if the website is actually responding...'
+                // This will fail the build immediately if the site returns a connection error
+                sh 'curl -f http://localhost:8081 || (echo "APP IS DOWN" && exit 1)'
             }
         }
 
@@ -27,16 +32,14 @@ pipeline {
             agent {
                 docker {
                     image 'markhobson/maven-chrome'
-                    // --shm-size="2g" prevents the Chrome browser from freezing/hanging
-                    args '--entrypoint="" --network host --shm-size="2g" -e HOME=/tmp' 
+                    args '--entrypoint="" --network host --shm-size=2g -e HOME=/tmp'
                 }
             }
             steps {
                 dir('LeafPetalsTestCases') {
                     git branch: 'main', url: 'https://github.com/ShahmeerAli/LeafPetalsTestCases.git'
-                    
-                    echo "Compiling and running tests for: ${PUSHER_EMAIL}"
-                    sh 'mvn clean test -Dmaven.repo.local=.m2/repository -Duser.home=/tmp' 
+                    echo "Running 15 tests for: ${env.RAW_EMAIL}"
+                    sh 'mvn clean test -Dmaven.repo.local=.m2/repository -Duser.home=/tmp'
                 }
             }
         }
@@ -44,15 +47,20 @@ pipeline {
 
     post {
         always {
-            echo 'Shutting down the application environment...'
+            echo 'Shutting down environment...'
             sh 'docker-compose down'
 
-            emailext (
-                subject: "Assignment 3: ${currentBuild.currentResult} - ${env.JOB_NAME}",
-                body: "View the results for commit by ${PUSHER_EMAIL} here: ${env.BUILD_URL}",
-                to: "${PUSHER_EMAIL}",
-                mimeType: 'text/html'
-            )
+            script {
+                // LOGIC: If the email is the fake GitHub one, use your real one so you get the report
+                def recipient = env.RAW_EMAIL.contains("noreply") ? "alishahmeer998@gmail.com" : env.RAW_EMAIL
+                
+                emailext (
+                    subject: "Assignment 3 Result: ${currentBuild.currentResult}",
+                    body: "Build ${env.BUILD_NUMBER} finished. Logs: ${env.BUILD_URL}",
+                    to: "${recipient}",
+                    mimeType: 'text/html'
+                )
+            }
         }
     }
 }
