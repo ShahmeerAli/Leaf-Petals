@@ -37,39 +37,51 @@ pipeline {
             agent {
                 docker {
                     image 'markhobson/maven-chrome'
-                    // FIX 1: Added --entrypoint="" to prevent the container from crashing on startup
-                    // --network host allows the container to reach the app on port 8081[cite: 1]
-                    args '--entrypoint="" --network host' 
+                    // Added -e HOME=. to give Selenium a writable place for drivers
+                    args '--entrypoint="" --network host -e HOME=.' 
                 }
             }
             steps {
                 dir('LeafPetalsTestCases') {
-                    // Re-checkout inside this agent because Docker uses a separate workspace[cite: 1]
                     git branch: 'main', url: 'https://github.com/ShahmeerAli/LeafPetalsTestCases.git'
                     
                     echo 'Compiling and running 15 Selenium test cases...'
-                    // FIX 2: Added -Dmaven.repo.local to force Maven to use a writable folder in the workspace[cite: 1]
-                    sh 'mvn clean test -Dmaven.repo.local=.m2/repository' 
+                    // Added -Duser.home=. to double-ensure Java can write to the workspace
+                    sh 'mvn clean test -Dmaven.repo.local=.m2/repository -Duser.home=.' 
                 }
             }
         }
     }
     
-    post {
+    // post {
+    //     always {
+    //         // TEAR DOWN: Shuts down deployment so it is "down initially" for the next run[cite: 1]
+    //         echo 'Shutting down the application environment...'
+    //         sh 'docker-compose down'
+
+    //         // EMAIL: Sends results to the committer captured in the environment block[cite: 1]
+    //         emailext (
+    //             subject: "Test Results & Build Status: Job ${env.JOB_NAME}",
+    //             body: """
+    //                 <p>Pipeline Execution Complete.</p>
+    //                 <p>Build Result: <strong>${currentBuild.currentResult}</strong></p>
+    //                 <p>You can view the full test execution logs here: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+    //             """,
+    //             to: "${PUSHER_EMAIL}",
+    //             mimeType: 'text/html'
+    //         )
+    //     }
+    // }
+     post {
         always {
-            // TEAR DOWN: Shuts down deployment so it is "down initially" for the next run[cite: 1]
             echo 'Shutting down the application environment...'
             sh 'docker-compose down'
 
-            // EMAIL: Sends results to the committer captured in the environment block[cite: 1]
             emailext (
-                subject: "Test Results & Build Status: Job ${env.JOB_NAME}",
-                body: """
-                    <p>Pipeline Execution Complete.</p>
-                    <p>Build Result: <strong>${currentBuild.currentResult}</strong></p>
-                    <p>You can view the full test execution logs here: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                """,
-                to: "${PUSHER_EMAIL}",
+                subject: "Assignment 3: ${currentBuild.currentResult} - ${env.JOB_NAME}",
+                body: "Check the 15 test results here: ${env.BUILD_URL}",
+                // Use these providers to find the actual pusher behind the mask
+                recipientProviders: [[$class: 'CulpritsRecipientProvider'], [$class: 'DevelopersRecipientProvider']],
                 mimeType: 'text/html'
             )
         }
