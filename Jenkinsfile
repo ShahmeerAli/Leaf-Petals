@@ -20,22 +20,22 @@ pipeline {
             }
         }
 
-       stage('Health Check & Seed Data') {
+      stage('Health Check & Seed Data') {
             steps {
-                echo 'Verifying the app is actually alive on port 8081...'
+                echo 'Verifying app and injecting data...'
                 sh '''
-                curl -f http://localhost:8081 || {
-                    echo "CRITICAL FAILURE: NEXT.JS CRASHED. PRINTING LOGS:"
-                    docker logs leaf_petals_app
-                    exit 1
-                }
-                
-                echo "App is up! Seeding the database with test data..."
-                # This hits your Next.js seed route to populate plants and test users
+                # 1. Seed the database (We know this works!)
                 curl -s http://localhost:8081/api/seed
                 
-                # Give the database 5 seconds to finish saving the new data
-                sleep 5
+                echo "Data seeded! Restarting container to wipe Next.js cache..."
+                # 2. Restart the app so it wakes up and sees the new plants
+                docker restart leaf_petals_app
+                
+                # 3. Give it 15 seconds to boot back up
+                sleep 15
+                
+                # 4. Final safety check before tests run
+                curl -f http://localhost:8081 || exit 1
                 '''
             }
         }
