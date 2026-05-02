@@ -13,7 +13,7 @@ services:
       - NEXTAUTH_SECRET=my_super_secret_plant_shop_key_2026
       # Note: We keep this as localhost:3000 because this is how users/tests access the app from the outside
       - NEXTAUTH_URL=http://localhost:8081
-      - NEXTAUTH_URL_INTERNAL=http://localhost:8080
+      - NEXTAUTH_URL_INTERNAL=http://127.0.0.1:8080
       - NODE_ENV=production
       
     depends_on:

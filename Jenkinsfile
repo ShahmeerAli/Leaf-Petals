@@ -20,21 +20,23 @@ pipeline {
             }
         }
 
-      stage('Health Check & Seed Data') {
+     stage('Health Check & Seed Data') {
             steps {
                 echo 'Verifying app and injecting data...'
                 sh '''
-                # 1. Seed the database (We know this works!)
+                # 1. Seed the database 
                 curl -s http://localhost:8081/api/seed
                 
-                echo "Data seeded! Restarting container to wipe Next.js cache..."
-                # 2. Restart the app so it wakes up and sees the new plants
-                docker restart leaf_petals_app
+                echo "Data seeded! Wiping Next.js aggressive disk cache..."
+                # 2. THE FIX: Physically delete the cache folder inside the container
+                docker exec leaf_petals_app rm -rf /app/.next/cache
                 
-                # 3. Give it 15 seconds to boot back up
+                echo "Restarting container..."
+                # 3. Restart the app. It will be forced to fetch fresh data from MongoDB!
+                docker restart leaf_petals_app
                 sleep 15
                 
-                # 4. Final safety check before tests run
+                # 4. Final safety check
                 curl -f http://localhost:8081 || exit 1
                 '''
             }
