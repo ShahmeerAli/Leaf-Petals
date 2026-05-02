@@ -14,4 +14,4 @@ RUN npm run build
 # Let Next.js use its default port 3000 internally
 EXPOSE 8081
 # THE FIX: Bypass package.json, force port 3000, and open to external Docker traffic (0.0.0.0)
-CMD ["npx", "next", "start", "-p", "3000", "-H", "0.0.0.0"]
+CMD ["npx", "next", "start", "-p", "8081", "-H", "0.0.0.0"]
