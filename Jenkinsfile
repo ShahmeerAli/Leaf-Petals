@@ -18,36 +18,27 @@ pipeline {
         }
 
         stage('Health Check & Seed Data') {
-    steps {
-        echo 'Waiting for application to become ready...'
-        
-        sh '''
-        # Retry until app is ready (max 10 attempts)
-        for i in {1..10}
-        do
-            echo "Attempt $i: Checking app..."
-            if curl -f http://127.0.0.1:8081 > /dev/null 2>&1; then
-                echo "App is up!"
-                break
-            fi
-            sleep 10
-        done
+            steps {
+                echo 'Verifying app and injecting data...'
+                sh '''
+                # 1. Seed the database using explicit IPv4
+                curl -s http://127.0.0.1:8081/api/seed
+                
+                echo "Data seeded! Wiping Next.js aggressive disk cache..."
+                # 2. Physically delete the cache folder inside the container
+                docker exec leaf_petals_app rm -rf /app/.next/cache
+                
+                echo "Restarting container..."
+                # 3. Restart the app. It will fetch fresh data from MongoDB!
+                docker restart leaf_petals_app
+                sleep 15
+                
+                # 4. Final safety check
+                curl -f http://127.0.0.1:8081 || exit 1
+                '''
+            }
+        }
 
-        echo "Seeding database..."
-        curl -f http://127.0.0.1:8081/api/seed
-
-        echo "Clearing Next.js cache..."
-        docker exec leaf_petals_app rm -rf /app/.next/cache
-
-        echo "Restarting container..."
-        docker restart leaf_petals_app
-        sleep 15
-
-        echo "Final health check..."
-        curl -f http://127.0.0.1:8081
-        '''
-    }
-}
         stage('Execute Containerized Tests') {
             // ONLY the testing stage runs inside the Maven/Chrome container
             agent {
