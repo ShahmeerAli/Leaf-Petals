@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        // Dynamically extracts the email from the actual commit metadata
-        RAW_EMAIL = sh(script: "git log -1 --pretty=format:'%ae'", returnStdout: true).trim()
+        // This will now successfully extract shahmeer.devel@gmail.com!
+        PUSHER_EMAIL = sh(script: "git log -1 --pretty=format:'%ae'", returnStdout: true).trim()
     }
 
     stages {
@@ -16,11 +16,18 @@ pipeline {
         stage('Deploy Leaf & Petals App') {
             steps {
                 echo 'Starting the application environment...'
-                // ADDED --build: Forces Docker to rebuild the container with your new NEXTAUTH_URL
                 sh 'docker-compose up -d --build'
                 
                 echo 'Waiting 90 seconds for Next.js to compile and start...'
                 sleep time: 90, unit: 'SECONDS'
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                echo 'Verifying the app is actually alive on port 8081...'
+                // Pings the app. If it drops the connection, the build stops here.
+                sh 'curl -f http://localhost:8081 || exit 1'
             }
         }
 
@@ -35,7 +42,7 @@ pipeline {
                 dir('LeafPetalsTestCases') {
                     git branch: 'main', url: 'https://github.com/ShahmeerAli/LeafPetalsTestCases.git'
                     
-                    echo "Compiling and running tests..."
+                    echo "Compiling and running tests for committer: ${PUSHER_EMAIL}"
                     sh 'mvn clean test -Dmaven.repo.local=.m2/repository -Duser.home=/tmp' 
                 }
             }
@@ -47,18 +54,13 @@ pipeline {
             echo 'Shutting down the application environment...'
             sh 'docker-compose down'
 
-            script {
-                // THE FIX: If Git hands Jenkins the fake GitHub email, force it to use your Gmail. 
-                // Otherwise, use the pusher's email dynamically.
-                def targetEmail = env.RAW_EMAIL.contains("noreply") ? "alishahmeer998@gmail.com" : env.RAW_EMAIL
-                
-                emailext (
-                    subject: "Assignment 3: ${currentBuild.currentResult} - ${env.JOB_NAME}",
-                    body: "View the results here: ${env.BUILD_URL}",
-                    to: targetEmail,
-                    mimeType: 'text/html'
-                )
-            }
+            // Fully dynamic! Uses the variable we extracted at the top.
+            emailext (
+                subject: "Assignment 3: ${currentBuild.currentResult} - ${env.JOB_NAME}",
+                body: "View the test results here: ${env.BUILD_URL}",
+                to: "${PUSHER_EMAIL}",
+                mimeType: 'text/html'
+            )
         }
     }
 }
