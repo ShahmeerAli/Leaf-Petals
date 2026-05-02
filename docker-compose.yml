@@ -6,7 +6,7 @@ services:
     container_name: leaf_petals_app
     # External traffic hits 8081, internal container listens on native 3000
     ports:
-      - "8081:3000"
+      - "8081:8081"
     environment:
       - MONGODB_URI=mongodb://leaf-petals-db:27017/LeafPetals
       - NEXTAUTH_SECRET=my_super_secret_plant_shop_key_2026
