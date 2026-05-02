@@ -20,7 +20,7 @@ pipeline {
             steps {
                 // Runs the JUnit Selenium tests using Maven
                 echo 'Running Selenium automated test cases...'
-                sh 'mvn clean test'
+                sh 'mvn clean test -Dmaven.repo.local=.m2/repository -Duser.home=/tmp'
             }
             post {
                 always {
