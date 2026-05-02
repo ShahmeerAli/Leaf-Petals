@@ -59,8 +59,8 @@ pipeline {
             }
             post {
                 always {
-                    // Captures the test results for Jenkins reporting
-                    junit 'target/surefire-reports/*.xml'
+                    // Captures the test results from the correct directory
+                    junit 'LeafPetalsTestCases/target/surefire-reports/*.xml'
                 }
             }
         }
