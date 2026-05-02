@@ -1,6 +1,11 @@
 pipeline {
     agent any
     
+    environment {
+        // Dynamically extracts the email of the author from the latest git commit
+        PUSHER_EMAIL = sh(script: "git --no-pager show -s --format='%ae'", returnStdout: true).trim()
+    }
+    
     stages {
         stage('Checkout Application Code') {
             steps {
@@ -11,7 +16,6 @@ pipeline {
         
         stage('Deploy Leaf & Petals App') {
             steps {
-                // Brings up your Next.js app and MongoDB on the EC2 host
                 echo 'Starting the application environment...'
                 sh 'docker-compose up -d'
                 
@@ -22,10 +26,8 @@ pipeline {
         
         stage('Checkout Test Code') {
             steps {
-                // Creates an isolated folder in the Jenkins workspace
                 dir('LeafPetalsTestCases') {
                     // Pulls your Java Selenium tests from your second repository
-                    // REPLACE [YourGitHubUsername] WITH YOUR ACTUAL USERNAME
                     git branch: 'main', url: 'https://github.com/ShahmeerAli/LeafPetalsTestCases.git'
                 }
             }
@@ -34,14 +36,12 @@ pipeline {
         stage('Execute Containerized Tests') {
             agent {
                 docker {
-                    // Uses the exact image required by the assignment
                     image 'markhobson/maven-chrome'
-                    // --network host allows the test container to reach your app at localhost:3000
+                    // --network host allows the test container to reach your app running on the EC2 host
                     args '--network host -v $HOME/.m2:/root/.m2'
                 }
             }
             steps {
-                // Step into the folder where we just downloaded the test code
                 dir('LeafPetalsTestCases') {
                     echo 'Compiling and running Selenium test cases...'
                     sh 'mvn clean test' 
@@ -52,20 +52,20 @@ pipeline {
     
     post {
         always {
-            // Emails the test results back to whoever pushed the commit
+            // 1. TEAR DOWN: Shuts down the deployment to ensure it is "down initially" for the next run
+            echo 'Shutting down the application environment...'
+            sh 'docker-compose down'
+
+            // 2. EMAIL: Sends the email strictly to the person who pushed the code
             emailext (
                 subject: "Test Results & Build Status: Job ${env.JOB_NAME}",
                 body: """
-                    Pipeline Execution Complete.
-                    Build Result: ${currentBuild.currentResult}
-                    
-                    You can view the full test execution logs here:
-                    ${env.BUILD_URL}
+                    <p>Pipeline Execution Complete.</p>
+                    <p>Build Result: <strong>${currentBuild.currentResult}</strong></p>
+                    <p>You can view the full test execution logs here: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
                 """,
-                recipientProviders: [
-                    developers(),
-                    requestor()
-                ]
+                to: "${PUSHER_EMAIL}",
+                mimeType: 'text/html'
             )
         }
     }
