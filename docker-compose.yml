@@ -6,7 +6,7 @@ services:
     build: .
     container_name: leaf_petals_app
     ports:
-      - "3000:3000"
+      - "8081:3000"
     environment:
       # We changed localhost to the name of the DB service below
       - MONGODB_URI=mongodb://leaf-petals-db:27017/LeafPetals
