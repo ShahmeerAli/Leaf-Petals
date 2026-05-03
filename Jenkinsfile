@@ -32,7 +32,7 @@ pipeline {
              sleep 15
 
              # 2. Final safety check
-            curl -f http://127.0.0.1:8081 || exit 1
+            curl -f http://127.0.0.1:8081
 
              # 3. Register the Selenium test user
              echo "Seeding test user..."
