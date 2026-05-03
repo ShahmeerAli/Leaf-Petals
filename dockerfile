@@ -7,7 +7,7 @@ COPY . .
 # Inject variables so the Next.js frontend bakes them into the HTML
 ENV MONGODB_URI="mongodb://leaf-petals-db:27017/LeafPetals"
 ENV NEXTAUTH_SECRET="my_super_secret_plant_shop_key_2026"
-ENV NEXT_PUBLIC_API_URL="http://127.0.0.1:8081"
+ENV NEXT_PUBLIC_API_URL="http://localhost:8081"
 
 RUN npm run build
 

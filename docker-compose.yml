@@ -10,8 +10,8 @@ services:
     environment:
       - MONGODB_URI=mongodb://leaf-petals-db:27017/LeafPetals
       - NEXTAUTH_SECRET=my_super_secret_plant_shop_key_2026
-      - NEXTAUTH_URL=http://127.0.0.1:8081
-      - NEXT_PUBLIC_API_URL=http://127.0.0.1:8081
+      - NEXTAUTH_URL=http://localhost:8081
+      - NEXT_PUBLIC_API_URL=http://localhost:8081
       - NODE_ENV=production
 
     depends_on:
