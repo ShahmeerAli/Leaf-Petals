@@ -67,88 +67,59 @@ pipeline {
     }
 
     post {
-        always {
-            echo 'Shutting down the application environment...'
-            sh 'docker-compose down'
+    always {
+        echo 'Shutting down the application environment...'
+        sh 'docker-compose down'
 
-            // Your exact dynamic email block!
-            emailext(
-                 subject: "[${currentBuild.currentResult}] ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                 mimeType: 'text/html',
-                 body: """
-                <div style="font-family: Arial, sans-serif; max-width: 650px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 6px 10px rgba(0,0,0,0.08);">
-
-                <!-- Header -->
+        emailext(
+            subject: "[${currentBuild.currentResult}] ${env.JOB_NAME}",
+            mimeType: 'text/html',
+            to: "${env.GIT_COMMITTER_EMAIL ?: sh(script: 'git log -1 --pretty=format:%ae', returnStdout: true).trim()}",
+            body: """
+            <div style="font-family: Arial, sans-serif; max-width: 650px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 6px 10px rgba(0,0,0,0.08);">
                 <div style="background-color: #1f2937; padding: 20px; text-align: center;">
-                 <h2 style="margin: 0; color: #ffffff;">Jenkins CI/CD Pipeline</h2>
-                <p style="margin: 5px 0 0; color: #d1d5db; font-size: 14px;">Automated Build Notification</p>
+                    <h2 style="margin: 0; color: #ffffff;">Jenkins CI/CD Pipeline</h2>
+                    <p style="margin: 5px 0 0; color: #d1d5db; font-size: 14px;">Automated Build Notification</p>
                 </div>
-
-            <!-- Body -->
-            <div style="padding: 25px; background-color: #ffffff;">
-            
-                <p style="font-size: 16px; color: #444;">
-                    The pipeline for <strong>${env.JOB_NAME}</strong> has completed execution.
-                 </p>
-
-                <!-- Status Badge -->
-                 <div style="margin: 20px 0; text-align: center;">
-                 <span style="
-                      padding: 10px 20px;
-                      border-radius: 20px;
-                      font-weight: bold;
-                     color: white;
-                     background-color: ${currentBuild.currentResult == 'SUCCESS' ? '#2ea44f' : '#d73a49'};
-                     ">
-                        ${currentBuild.currentResult}
-                    </span>
+                <div style="padding: 25px; background-color: #ffffff;">
+                    <p style="font-size: 16px; color: #444;">
+                        The pipeline for <strong>${env.JOB_NAME}</strong> has completed execution.
+                    </p>
+                    <div style="margin: 20px 0; text-align: center;">
+                        <span style="padding: 10px 20px; border-radius: 20px; font-weight: bold; color: white; background-color: ${currentBuild.currentResult == 'SUCCESS' ? '#2ea44f' : '#d73a49'};">
+                            ${currentBuild.currentResult}
+                        </span>
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #eee; background: #f9fafb;"><b>Job Name</b></td>
+                            <td style="padding: 10px; border: 1px solid #eee;">${env.JOB_NAME}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #eee; background: #f9fafb;"><b>Branch</b></td>
+                            <td style="padding: 10px; border: 1px solid #eee;">${env.GIT_BRANCH}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #eee; background: #f9fafb;"><b>Triggered By</b></td>
+                            <td style="padding: 10px; border: 1px solid #eee;">GitHub Push</td>
+                        </tr>
+                    </table>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="${env.BUILD_URL}" style="background-color: #2563eb; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                            View Build Details
+                        </a>
+                    </div>
                 </div>
-
-                 <!-- Info Table -->
-                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                    <tr>
-                    <td style="padding: 10px; border: 1px solid #eee; background: #f9fafb;"><b>Job Name</b></td>
-                    <td style="padding: 10px; border: 1px solid #eee;">${env.JOB_NAME}</td>
-                 </tr>
-                    <tr>
-                    <td style="padding: 10px; border: 1px solid #eee; background: #f9fafb;"><b>Build Number</b></td>
-                    <td style="padding: 10px; border: 1px solid #eee;">#${env.BUILD_NUMBER}</td>
-                 </tr>
-                <tr>
-                    <td style="padding: 10px; border: 1px solid #eee; background: #f9fafb;"><b>Branch</b></td>
-                    <td style="padding: 10px; border: 1px solid #eee;">${env.GIT_BRANCH}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 10px; border: 1px solid #eee; background: #f9fafb;"><b>Triggered By</b></td>
-                    <td style="padding: 10px; border: 1px solid #eee;">GitHub Push</td>
-                </tr>
-            </table>
-
-            <!-- Button -->
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="${env.BUILD_URL}" 
-                   style="background-color: #2563eb; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                   View Build Details
-                </a>
+                <div style="background-color: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #777;">
+                    This is an automated message from Jenkins CI/CD Pipeline.<br/>
+                    Please do not reply to this email.
+                </div>
             </div>
-
-        </div>
-
-        <!-- Footer -->
-        <div style="background-color: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #777;">
-            This is an automated message from Jenkins CI/CD Pipeline.<br/>
-            Please do not reply to this email.
-        </div>
-
-    </div>
-    """,
-
-       recipientProviders: [
-         [$class: 'RequesterRecipientProvider'],
-         [$class: 'DevelopersRecipientProvider'],
-         [$class: 'CulpritsRecipientProvider']
-      ]
-   )
-        }
+            """,
+            recipientProviders: [
+                [$class: 'DevelopersRecipientProvider']
+            ]
+        )
     }
+ }
 }
