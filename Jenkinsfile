@@ -34,11 +34,11 @@ pipeline {
                     echo "Not ready yet... retry $i/15"
                     sleep 5
                 done
-
+                # If the app is still not up, exit with error
                 # 3. Seed the test user using heredoc to avoid quoting issues
                 cat > /tmp/seed_user.json << 'ENDJSON'
-{"name":"Test User","email":"test@leafpetals.com","password":"Test@1234"}
-ENDJSON
+              {"name":"Test User","email":"test@leafpetals.com","password":"Test@1234"}
+               ENDJSON
 
                 echo "Seeding test user..."
                 curl -s -X POST http://127.0.0.1:8081/api/auth/register \
