@@ -34,8 +34,8 @@ export default function RootLayout({ children }) {
               {children}
             </main>
             <Footer />
-            <Toaster position="bottom-right" />
           </CartProvider>
+          <Toaster position="bottom-right" />
         </AuthProvider>
       </body>
     </html>

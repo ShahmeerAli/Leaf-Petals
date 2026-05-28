@@ -26,12 +26,17 @@ export default function CheckoutPage() {
         }
     }, [status, router]);
 
+    useEffect(() => {
+        if (status !== "loading" && cart.length === 0) {
+            router.push("/cart");
+        }
+    }, [cart.length, status, router]);
+
     if (status === "loading") {
         return <div className="min-h-screen bg-slate-50 flex items-center justify-center">Loading...</div>;
     }
 
     if (cart.length === 0) {
-        router.push("/cart");
         return null;
     }
 

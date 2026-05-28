@@ -1,19 +1,18 @@
 import Link from "next/link";
+import connectDB from "@/lib/db/mongodb";
+import Plant from "@/models/Plant";
+
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const getPlants = async () => {
     try {
-      const res = await fetch(`${process.env.NEXTAUTH_URL}/api/plants`, {
-        cache: "no-store",
-      });
-      if (!res.ok) {
-        throw new Error("Failed to fetch plants");
-      }
-      const data = await res.json();
-      return data.data;
+      await connectDB();
+      const plants = await Plant.find({}).sort({ createdAt: -1 }).lean();
+      // lean() returns plain JS objects; convert _id from ObjectId to string
+      return plants.map((p) => ({ ...p, _id: p._id.toString() }));
     } catch (error) {
-      console.log(error);
+      console.error("Failed to fetch plants:", error);
       return [];
     }
   };
